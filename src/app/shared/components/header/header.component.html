@@ -1,0 +1,78 @@
+<header class="modern-header">
+  <div class="header-container">
+
+    <!-- Logo Section -->
+    <div class="logo-section" (click)="navigateTo('/dashboard')">
+      <div class="logo-icon">
+        <mat-icon>task_alt</mat-icon>
+      </div>
+      <span class="brand-name">Task Manager</span>
+    </div>
+
+    <!-- Navigation Section (Desktop) -->
+    <nav class="nav-section" *ngIf="isAuthenticated">
+      <a class="nav-link" (click)="navigateTo('/dashboard')" [class.active]="isActive('/dashboard')">
+        <span>Dashboard</span>
+      </a>
+      <a class="nav-link" (click)="navigateTo('/tasks')" [class.active]="isActive('/tasks')">
+        <span>Tasks</span>
+      </a>
+    </nav>
+
+    <!-- User Section -->
+    <div class="user-section">
+      <div *ngIf="isAuthenticated" class="user-menu-wrapper">
+        <button mat-button class="user-button" [matMenuTriggerFor]="userMenu">
+          <div class="user-avatar">
+            <span>{{ getUserInitials() }}</span>
+          </div>
+          <span class="user-name">{{ currentUser?.firstName }}</span>
+          <mat-icon class="dropdown-icon">expand_more</mat-icon>
+        </button>
+
+        <mat-menu #userMenu="matMenu" class="modern-menu">
+          <div class="menu-header">
+            <div class="menu-user-info">
+              <div class="menu-avatar">{{ getUserInitials() }}</div>
+              <div class="menu-user-details">
+                <p class="menu-user-name">{{ currentUser?.firstName }} {{ currentUser?.lastName }}</p>
+                <p class="menu-user-email">{{ currentUser?.email }}</p>
+              </div>
+            </div>
+          </div>
+          <mat-divider></mat-divider>
+          <button mat-menu-item (click)="logout()" class="logout-item">
+            <mat-icon>logout</mat-icon>
+            <span>Logout</span>
+          </button>
+        </mat-menu>
+      </div>
+
+      <div *ngIf="!isAuthenticated" class="auth-buttons">
+        <button mat-stroked-button class="login-btn" (click)="navigateTo('/auth/login')">
+          Login
+        </button>
+        <button mat-raised-button class="register-btn" (click)="navigateTo('/auth/register')">
+          Get Started
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Menu Toggle -->
+    <button mat-icon-button class="mobile-menu-btn" *ngIf="isAuthenticated" (click)="toggleMobileMenu()">
+      <mat-icon>menu</mat-icon>
+    </button>
+  </div>
+
+  <!-- Mobile Navigation -->
+  <div class="mobile-nav" *ngIf="isAuthenticated && isMobileMenuOpen">
+    <a class="mobile-nav-link" (click)="navigateToAndClose('/dashboard')">
+      <mat-icon>dashboard</mat-icon>
+      <span>Dashboard</span>
+    </a>
+    <a class="mobile-nav-link" (click)="navigateToAndClose('/tasks')">
+      <mat-icon>assignment</mat-icon>
+      <span>Tasks</span>
+    </a>
+  </div>
+</header>

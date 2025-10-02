@@ -1,0 +1,208 @@
+.hero-section {
+  height: 600px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+// Background Image
+.background-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url('/assets/images/hero-background.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  z-index: 0;
+
+
+animation: zoomIn 10s ease infinite alternate;
+}
+
+// Glass overlay effect
+.background-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  z-index: 1;
+}
+
+// Optional: Parallax zoom animation
+@keyframes zoomIn {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.1);
+  }
+}
+
+.hero-container {
+  height: 600px;
+  max-width: 1800px;
+  width: 100%;
+  position: relative;
+  z-index: 2; // Above background
+}
+
+.hero-content {
+  text-align: center;
+  max-width: 1800px;
+  padding: 140px;
+}
+
+.hero-title {
+  font-size: 72px;
+  font-weight: 550;
+  color: #ffffff;
+  margin: 0 0 24px 0;
+  line-height: 1.1;
+  letter-spacing: -2px;
+  text-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+
+  @media (max-width: 768px) {
+    font-size: 48px;
+    letter-spacing: -1px;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 36px;
+  }
+}
+
+.hero-description {
+  font-size: 18px;
+  color: #ffffff;
+  line-height: 1.8;
+  margin: 0 0 40px 0;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.6);
+
+  @media (max-width: 768px) {
+    font-size: 16px;
+  }
+}
+
+.hero-actions {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #2DACBD 0%, #094C54 100%);
+  color: #ffffff !important;
+  font-weight: 500;
+  font-size: 16px;
+  padding: 14px 36px !important;
+  height: auto !important;
+  line-height: 1.5 !important;
+  border-radius: 8px !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3) !important;
+  transition: all 0.3s ease;
+  text-transform: none !important;
+  letter-spacing: 0 !important;
+
+  &:hover {
+    background: #2DACBD !important;
+    box-shadow: 0 6px 24px rgba(117, 22, 76, 0.5) !important;
+    transform: translateY(-2px);
+  }
+}
+
+.btn-secondary {
+  color: #ffffff !important;
+  border-color: rgba(255, 255, 255, 0.8) !important;
+  background: rgba(255, 255, 255, 0.1) !important;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  font-weight: 500;
+  font-size: 16px;
+  padding: 13px 32px !important;
+  height: auto !important;
+  line-height: 1.5 !important;
+  border-radius: 8px !important;
+  border-width: 2px !important;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-transform: none !important;
+  letter-spacing: 0 !important;
+
+  mat-icon {
+    color: #ffffff;
+    font-size: 24px;
+    width: 24px;
+    height: 24px;
+  }
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.25) !important;
+    border-color: rgba(255, 255, 255, 1) !important;
+    color: #ffffff !important;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(255, 255, 255, 0.2);
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .hero-section {
+    height: calc(100vh - 64px);
+    min-height: 500px;
+  }
+
+  .hero-container {
+    height: auto;
+  }
+
+  .hero-content {
+    padding: 40px 16px;
+  }
+
+  .hero-actions {
+    flex-direction: column;
+    width: 100%;
+
+    button {
+      width: 100%;
+      max-width: 300px;
+    }
+  }
+
+  .background-image {
+    background-position: center;
+  }
+}
+
+/* Material Button Override for consistency */
+::ng-deep {
+  .btn-primary.mat-mdc-raised-button {
+    .mat-mdc-button-persistent-ripple,
+    .mat-mdc-button-ripple {
+      border-radius: 8px;
+    }
+  }
+
+  .btn-secondary.mat-mdc-outlined-button {
+    .mat-mdc-button-persistent-ripple,
+    .mat-mdc-button-ripple {
+      border-radius: 8px;
+    }
+  }
+}

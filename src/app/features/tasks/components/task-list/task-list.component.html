@@ -1,0 +1,125 @@
+<div class="task-list-container">
+  <!-- Header Section -->
+  <div class="header">
+    <h1>My Tasks</h1>
+    <button mat-raised-button color="primary" (click)="openTaskDialog()">
+      <mat-icon>add</mat-icon>
+      New Task
+    </button>
+  </div>
+
+  <!-- Filters Section -->
+  <div class="filters">
+    <mat-form-field appearance="outline" class="search-field">
+      <mat-label>Search</mat-label>
+      <mat-icon matPrefix>search</mat-icon>
+      <input matInput [(ngModel)]="searchTerm" (ngModelChange)="filterTasks()" placeholder="Search tasks...">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Status</mat-label>
+      <mat-select [(ngModel)]="selectedStatus" (selectionChange)="filterTasks()">
+        <mat-option value="ALL">All Status</mat-option>
+        <mat-option [value]="TaskStatus.TODO">To Do</mat-option>
+        <mat-option [value]="TaskStatus.IN_PROGRESS">In Progress</mat-option>
+        <mat-option [value]="TaskStatus.COMPLETED">Completed</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Priority</mat-label>
+      <mat-select [(ngModel)]="selectedPriority" (selectionChange)="filterTasks()">
+        <mat-option value="ALL">All Priorities</mat-option>
+        <mat-option [value]="TaskPriority.LOW">Low</mat-option>
+        <mat-option [value]="TaskPriority.MEDIUM">Medium</mat-option>
+        <mat-option [value]="TaskPriority.HIGH">High</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <!-- Loading Spinner -->
+  <app-loading-spinner *ngIf="loading"></app-loading-spinner>
+
+  <!-- Tasks Grid -->
+  <div class="tasks-grid" *ngIf="!loading">
+    <mat-card *ngFor="let task of filteredTasks" class="task-card">
+      <!-- Card Header with Menu -->
+      <mat-card-header>
+        <mat-card-title>{{ task.title }}</mat-card-title>
+        <button mat-icon-button [matMenuTriggerFor]="menu">
+          <mat-icon>more_vert</mat-icon>
+        </button>
+        <mat-menu #menu="matMenu">
+          <button mat-menu-item (click)="openTaskDialog(task)">
+            <mat-icon>edit</mat-icon>
+            <span>Edit</span>
+          </button>
+          <button mat-menu-item (click)="deleteTask(task)">
+            <mat-icon>delete</mat-icon>
+            <span>Delete</span>
+          </button>
+        </mat-menu>
+      </mat-card-header>
+
+      <!-- Card Content -->
+      <mat-card-content>
+        <p class="description">{{ task.description }}</p>
+
+        <!-- Status and Priority Chips -->
+        <div class="chips-container">
+          <mat-chip-set>
+            <mat-chip [style.background-color]="getStatusColor(task.status)">
+              {{ task.status }}
+            </mat-chip>
+            <mat-chip [style.background-color]="getPriorityColor(task.priority)">
+              {{ task.priority }}
+            </mat-chip>
+          </mat-chip-set>
+        </div>
+
+        <!-- Due Date -->
+        <div class="due-date" *ngIf="task.dueDate">
+          <mat-icon>event</mat-icon>
+          <span>{{ task.dueDate | date:'M/d/yy, h:mm a' }}</span>
+        </div>
+      </mat-card-content>
+
+      <!-- Card Actions -->
+      <mat-card-actions>
+        <!-- Start Button - Only show when status is TODO -->
+        <button
+          mat-stroked-button
+          *ngIf="task.status === TaskStatus.TODO"
+          (click)="updateTaskStatus(task, TaskStatus.IN_PROGRESS)">
+          Start
+        </button>
+
+        <!-- Complete Button - Show when status is TODO or IN_PROGRESS -->
+        <button
+          mat-stroked-button
+          *ngIf="task.status !== TaskStatus.COMPLETED"
+          (click)="updateTaskStatus(task, TaskStatus.COMPLETED)">
+          Complete
+        </button>
+
+        <!-- Reopen Button - Show when status is COMPLETED -->
+        <button
+          mat-stroked-button
+          *ngIf="task.status === TaskStatus.COMPLETED"
+          (click)="updateTaskStatus(task, TaskStatus.TODO)">
+          Reopen
+        </button>
+      </mat-card-actions>
+    </mat-card>
+
+    <!-- Empty State -->
+    <div class="empty-state" *ngIf="filteredTasks.length === 0">
+      <mat-icon>inbox</mat-icon>
+      <h2>No tasks found</h2>
+      <p>Create a new task to get started</p>
+      <button mat-raised-button color="primary" (click)="openTaskDialog()">
+        Create Task
+      </button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,242 @@
+.register-layout {
+  display: flex;
+  min-height: calc(100vh - 70px);
+  width: 100%;
+}
+
+// Left Side - Hero Section
+.hero-side {
+  flex: 1;
+  background: linear-gradient(135deg, #2DACBD 0%, #092329 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 60px;
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    width: 500px;
+    height: 500px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    top: -250px;
+    right: -250px;
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    width: 300px;
+    height: 300px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 50%;
+    bottom: -150px;
+    left: -150px;
+  }
+
+  @media (max-width: 968px) {
+    display: none; // Hide on mobile/tablet
+  }
+}
+
+.hero-content {
+  max-width: 500px;
+  color: #ffffff;
+  position: relative;
+  z-index: 1;
+}
+
+.hero-title {
+  font-size: 48px;
+  font-weight: 800;
+  margin: 0 0 24px 0;
+  line-height: 1.2;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+
+  @media (max-width: 1200px) {
+    font-size: 36px;
+  }
+}
+
+.hero-description {
+  font-size: 18px;
+  line-height: 1.6;
+  margin: 0 0 40px 0;
+  opacity: 0.95;
+}
+
+.hero-features {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.feature-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 16px;
+
+  mat-icon {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 24px;
+    width: 24px;
+    height: 24px;
+  }
+}
+
+// Right Side - Form Section
+.form-side {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  background: #f8f9fa;
+
+  @media (max-width: 968px) {
+    flex: none;
+    width: 100%;
+  }
+}
+
+.form-container {
+  width: 100%;
+  max-width: 500px;
+}
+
+.register-card {
+  padding: 40px;
+  border-radius: 1px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+  background: #ffffff;
+
+  @media (max-width: 480px) {
+    padding: 24px;
+  }
+}
+
+mat-card-header {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-bottom: 32px;
+  padding: 0;
+
+  mat-card-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: #1a202c;
+    margin: 0 0 8px 0;
+  }
+
+  mat-card-subtitle {
+    font-size: 16px;
+    color: #718096;
+    margin: 0;
+  }
+}
+
+.name-row {
+  display: flex;
+  gap: 16px;
+
+  @media (max-width: 480px) {
+    flex-direction: column;
+    gap: 0;
+  }
+}
+
+.half-width {
+  flex: 1;
+  margin-bottom: 16px;
+
+  @media (max-width: 480px) {
+    width: 100%;
+  }
+}
+
+.full-width {
+  width: 100%;
+  margin-bottom: 16px;
+}
+
+.submit-btn {
+  margin-top: 8px;
+  height: 48px;
+  background: black !important;
+  color: #ffffff !important;
+  font-weight: 500;
+  font-size: 16px;
+  border-radius: 8px !important;
+
+  &:hover:not(:disabled) {
+    background: #75164c !important;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(117, 22, 76, 0.3);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+  }
+}
+
+.login-link {
+  text-align: center;
+  margin-top: 24px;
+
+  p {
+    color: black;
+    font-size: 14px;
+    margin: 0;
+
+    a {
+      color: blue;
+      text-decoration: none;
+      font-weight: 400;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+}
+
+// Form Field Styling
+::ng-deep {
+  .register-card {
+    .mat-mdc-form-field {
+      .mat-mdc-text-field-wrapper {
+        background: #ffffff;
+      }
+
+      .mat-mdc-form-field-focus-overlay {
+        background: transparent;
+      }
+    }
+
+    .mat-mdc-outlined-button {
+      border-radius: 8px;
+    }
+  }
+}
+
+// Responsive Design
+@media (max-width: 968px) {
+  .register-layout {
+    min-height: calc(100vh - 64px);
+  }
+}
+
+@media (max-width: 480px) {
+  .form-container {
+    max-width: 100%;
+  }
+
+  .hero-title {
+    font-size: 32px;
+  }
+}

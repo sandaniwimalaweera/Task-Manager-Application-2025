@@ -1,0 +1,179 @@
+<div class="dashboard-wrapper">
+  <!-- Modern Header Section -->
+  <div class="dashboard-header">
+    <div class="header-container">
+      <div class="header-left">
+        <div class="welcome-section">
+          <h1 class="welcome-title">
+            Welcome back, <span class="user-name">{{ currentUser?.firstName }}!</span>
+          </h1>
+          <p class="welcome-subtitle">Here's what's happening with your tasks today</p>
+        </div>
+      </div>
+      <div class="header-right">
+        <!-- UPDATED: This button now opens the dialog -->
+        <button mat-raised-button class="action-btn primary-btn" (click)="openNewTaskDialog()">
+          <mat-icon>add_circle</mat-icon>
+          <span>New Task</span>
+        </button>
+        <button mat-icon-button class="icon-btn">
+          <mat-icon>notifications</mat-icon>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="dashboard-content">
+    <!-- Stats Overview -->
+    <div class="stats-section">
+      <div class="stats-grid">
+        <div class="stat-card card-blue">
+          <div class="stat-icon-wrapper">
+            <div class="stat-icon">
+              <mat-icon>task_alt</mat-icon>
+            </div>
+          </div>
+          <div class="stat-details">
+            <span class="stat-label">Total Tasks</span>
+            <div class="stat-value-row">
+              <h2 class="stat-value">{{ stats.totalTasks }}</h2>
+            </div>
+            <p class="stat-description">Active tasks in your workspace</p>
+          </div>
+        </div>
+
+        <div class="stat-card card-green">
+          <div class="stat-icon-wrapper">
+            <div class="stat-icon">
+              <mat-icon>check_circle</mat-icon>
+            </div>
+          </div>
+          <div class="stat-details">
+            <span class="stat-label">Completed</span>
+            <div class="stat-value-row">
+              <h2 class="stat-value">{{ stats.completedTasks }}</h2>
+            </div>
+            <p class="stat-description">Tasks finished this week</p>
+          </div>
+        </div>
+
+        <div class="stat-card card-orange">
+          <div class="stat-icon-wrapper">
+            <div class="stat-icon">
+              <mat-icon>pending_actions</mat-icon>
+            </div>
+          </div>
+          <div class="stat-details">
+            <span class="stat-label">In Progress</span>
+            <div class="stat-value-row">
+              <h2 class="stat-value">{{ stats.pendingTasks }}</h2>
+            </div>
+            <p class="stat-description">Tasks currently active</p>
+          </div>
+        </div>
+
+        <div class="stat-card card-red">
+          <div class="stat-icon-wrapper">
+            <div class="stat-icon">
+              <mat-icon>priority_high</mat-icon>
+            </div>
+          </div>
+          <div class="stat-details">
+            <span class="stat-label">High Priority</span>
+            <div class="stat-value-row">
+              <h2 class="stat-value">{{ stats.highPriorityTasks }}</h2>
+            </div>
+            <p class="stat-description">Urgent tasks requiring attention</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent Tasks Section -->
+    <div class="tasks-section">
+      <div class="section-header">
+        <div class="section-title-wrapper">
+          <h2 class="section-title">Recent Tasks</h2>
+          <span class="section-badge">{{ recentTasks.length }} items</span>
+        </div>
+        <button mat-button class="view-all-btn" (click)="navigateToTasks()">
+          <span>View All</span>
+          <mat-icon>arrow_forward</mat-icon>
+        </button>
+      </div>
+
+      <div class="tasks-container">
+        <!-- Loading State -->
+        <div *ngIf="loading" class="loading-state">
+          <mat-spinner diameter="48"></mat-spinner>
+          <p class="loading-text">Loading your tasks...</p>
+        </div>
+
+        <!-- Empty State -->
+        <div *ngIf="!loading && recentTasks.length === 0" class="empty-state">
+          <div class="empty-icon">
+            <mat-icon>assignment</mat-icon>
+          </div>
+          <h3 class="empty-title">No tasks yet</h3>
+          <p class="empty-description">Create your first task to start organizing your work</p>
+          <!-- UPDATED: This button now opens the dialog -->
+          <button mat-raised-button class="action-btn primary-btn" (click)="openNewTaskDialog()">
+            <mat-icon>add_circle</mat-icon>
+            <span>Create First Task</span>
+          </button>
+        </div>
+
+        <!-- Tasks List -->
+        <div *ngIf="!loading && recentTasks.length > 0" class="tasks-list">
+          <!-- UPDATED: Task item is now clickable to open edit dialog -->
+          <div *ngFor="let task of recentTasks" class="task-item" (click)="viewTask(task)">
+            <!-- UPDATED: Checkbox with stop propagation to prevent opening dialog when toggling -->
+            <div class="task-checkbox" (click)="toggleTaskComplete(task, $event)">
+              <mat-icon *ngIf="task.status === 'COMPLETED'" class="check-icon completed">check_circle</mat-icon>
+              <mat-icon *ngIf="task.status !== 'COMPLETED'" class="check-icon">radio_button_unchecked</mat-icon>
+            </div>
+
+            <div class="task-content">
+              <div class="task-main">
+                <h3 class="task-title" [class.completed]="task.status === 'COMPLETED'">
+                  {{ task.title }}
+                </h3>
+                <div class="task-badges">
+                  <span class="priority-badge" [class]="'priority-' + task.priority.toLowerCase()">
+                    <mat-icon>flag</mat-icon>
+                    {{ task.priority }}
+                  </span>
+                  <span class="status-badge" [class]="'status-' + task.status.toLowerCase()">
+                    {{ task.status | titlecase }}
+                  </span>
+                </div>
+              </div>
+
+              <p class="task-description" *ngIf="task.description">
+                {{ task.description }}
+              </p>
+
+              <div class="task-meta">
+                <div class="meta-item" *ngIf="task.dueDate">
+                  <mat-icon>event</mat-icon>
+                  <span>{{ task.dueDate | date:'MMM d, y' }}</span>
+                </div>
+                <div class="meta-item" *ngIf="task.category">
+                  <mat-icon>folder</mat-icon>
+                  <span>{{ task.category }}</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- UPDATED: Edit icon with stop propagation -->
+            <div class="task-actions">
+              <button mat-icon-button (click)="viewTask(task); $event.stopPropagation()">
+                <mat-icon>edit</mat-icon>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

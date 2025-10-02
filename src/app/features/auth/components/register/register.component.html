@@ -1,0 +1,133 @@
+<div class="register-layout">
+  <!-- Left Side - Hero Section -->
+  <div class="hero-side">
+    <div class="hero-content">
+      <h1 class="hero-title">Welcome to Task Manager</h1>
+      <p class="hero-description">
+        Start organizing your tasks efficiently. Join thousands of users who manage their productivity with our platform.
+      </p>
+      <div class="hero-features">
+        <div class="feature-item">
+          <mat-icon>check_circle</mat-icon>
+          <span>Easy task organization</span>
+        </div>
+        <div class="feature-item">
+          <mat-icon>check_circle</mat-icon>
+          <span>Priority management</span>
+        </div>
+        <div class="feature-item">
+          <mat-icon>check_circle</mat-icon>
+          <span>Deadline tracking</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right Side - Register Form -->
+  <div class="form-side">
+    <div class="form-container">
+      <mat-card class="register-card">
+        <mat-card-header>
+          <mat-card-title>Create Account</mat-card-title>
+          <mat-card-subtitle>Sign up to get started</mat-card-subtitle>
+        </mat-card-header>
+
+        <mat-card-content>
+          <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+            <div class="name-row">
+              <mat-form-field appearance="outline" class="half-width">
+                <mat-label>First Name</mat-label>
+                <input matInput formControlName="firstName" placeholder="First name">
+                <mat-error *ngIf="f['firstName'].hasError('required')">
+                  First name is required
+                </mat-error>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="half-width">
+                <mat-label>Last Name</mat-label>
+                <input matInput formControlName="lastName" placeholder="Last name">
+                <mat-error *ngIf="f['lastName'].hasError('required')">
+                  Last name is required
+                </mat-error>
+              </mat-form-field>
+            </div>
+
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Username</mat-label>
+              <input matInput formControlName="username" placeholder="Choose a username">
+              <mat-icon matPrefix>person</mat-icon>
+              <mat-error *ngIf="f['username'].hasError('required')">
+                Username is required
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Email</mat-label>
+              <input matInput type="email" formControlName="email" placeholder="your@email.com">
+              <mat-icon matPrefix>email</mat-icon>
+              <mat-error *ngIf="f['email'].hasError('required')">
+                Email is required
+              </mat-error>
+              <mat-error *ngIf="f['email'].hasError('email')">
+                Please enter a valid email
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Password</mat-label>
+              <input
+                matInput
+                [type]="hidePassword ? 'password' : 'text'"
+                formControlName="password"
+                placeholder="Enter password">
+              <mat-icon matPrefix>lock</mat-icon>
+              <button
+                mat-icon-button
+                matSuffix
+                type="button"
+                (click)="hidePassword = !hidePassword">
+                <mat-icon>{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+              </button>
+              <mat-error *ngIf="f['password'].hasError('required')">
+                Password is required
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Confirm Password</mat-label>
+              <input
+                matInput
+                [type]="hideConfirmPassword ? 'password' : 'text'"
+                formControlName="confirmPassword"
+                placeholder="Confirm password">
+              <mat-icon matPrefix>lock</mat-icon>
+              <button
+                mat-icon-button
+                matSuffix
+                type="button"
+                (click)="hideConfirmPassword = !hideConfirmPassword">
+                <mat-icon>{{hideConfirmPassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+              </button>
+              <mat-error *ngIf="f['confirmPassword'].hasError('passwordMismatch')">
+                Passwords do not match
+              </mat-error>
+            </mat-form-field>
+
+            <button
+              mat-raised-button
+              type="submit"
+              class="submit-btn full-width"
+              [disabled]="loading || registerForm.invalid">
+              <mat-spinner *ngIf="loading" diameter="20"></mat-spinner>
+              <span *ngIf="!loading">Create Account</span>
+            </button>
+          </form>
+
+          <div class="login-link">
+            <p>Already have an account? <a routerLink="/auth/login">Login here</a></p>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+</div>
