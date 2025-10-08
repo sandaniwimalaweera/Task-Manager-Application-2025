@@ -3,9 +3,9 @@ package com.taskmanager.task_manager_backend.model;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import jakarta.validation.constraints.NotBlank;  // Changed from javax to jakarta
-import jakarta.validation.constraints.NotNull;   // Changed from javax to jakarta
-import jakarta.validation.constraints.Size;      // Changed from javax to jakarta
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -34,11 +34,33 @@ public class Task {
 
     private LocalDateTime updatedAt;
 
-    private String username;  // Changed from @NotBlank to optional
+    private String username;
 
     private String category;
 
     private List<String> tags;
+
+    // ====================================
+    // KANBAN BOARD FIELDS (NEW)
+    // ====================================
+
+    /**
+     * The ID of the kanban board this task belongs to
+     * Null if task is not on any board
+     */
+    private String boardId;
+
+    /**
+     * The ID of the column this task is in on the kanban board
+     * Null if task is not on any board
+     */
+    private String columnId;
+
+    /**
+     * The position of this task within its column
+     * Used for ordering tasks in the UI
+     */
+    private Integer positionInColumn;
 
     // Default constructor
     public Task() {
@@ -54,7 +76,7 @@ public class Task {
         this.updatedAt = LocalDateTime.now();
     }
 
-    // Getters and Setters
+    // Getters and Setters (Original)
     public String getId() {
         return id;
     }
@@ -141,5 +163,74 @@ public class Task {
 
     public void setTags(List<String> tags) {
         this.tags = tags;
+    }
+
+    // ====================================
+    // KANBAN GETTERS AND SETTERS (NEW)
+    // ====================================
+
+    public String getBoardId() {
+        return boardId;
+    }
+
+    public void setBoardId(String boardId) {
+        this.boardId = boardId;
+    }
+
+    public String getColumnId() {
+        return columnId;
+    }
+
+    public void setColumnId(String columnId) {
+        this.columnId = columnId;
+    }
+
+    public Integer getPositionInColumn() {
+        return positionInColumn;
+    }
+
+    public void setPositionInColumn(Integer positionInColumn) {
+        this.positionInColumn = positionInColumn;
+    }
+
+    // ====================================
+    // UTILITY METHODS
+    // ====================================
+
+    /**
+     * Check if this task is currently on a kanban board
+     */
+    public boolean isOnBoard() {
+        return boardId != null && columnId != null;
+    }
+
+    /**
+     * Remove task from kanban board
+     */
+    public void removeFromBoard() {
+        this.boardId = null;
+        this.columnId = null;
+        this.positionInColumn = null;
+    }
+
+    /**
+     * Update the updatedAt timestamp
+     */
+    public void touch() {
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    @Override
+    public String toString() {
+        return "Task{" +
+                "id='" + id + '\'' +
+                ", title='" + title + '\'' +
+                ", status=" + status +
+                ", priority=" + priority +
+                ", username='" + username + '\'' +
+                ", boardId='" + boardId + '\'' +
+                ", columnId='" + columnId + '\'' +
+                ", positionInColumn=" + positionInColumn +
+                '}';
     }
 }

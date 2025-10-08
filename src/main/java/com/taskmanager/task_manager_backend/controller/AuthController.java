@@ -10,6 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/auth")
@@ -29,21 +31,36 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<String> register(@Valid @RequestBody UserProfileDto userProfileDto) {
+    public ResponseEntity<Map<String, Object>> register(@Valid @RequestBody UserProfileDto userProfileDto) {
         userService.registerUser(userProfileDto);
-        return ResponseEntity.ok("User registered successfully");
+
+        // Return JSON response instead of plain text
+        Map<String, Object> response = new HashMap<>();
+        response.put("message", "User registered successfully");
+        response.put("username", userProfileDto.getUsername());
+        response.put("success", true);
+
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<String> logout() {
+    public ResponseEntity<Map<String, Object>> logout() {
         // With JWT, logout is typically handled client-side by removing the token
-        return ResponseEntity.ok("Logged out successfully");
+        Map<String, Object> response = new HashMap<>();
+        response.put("message", "Logged out successfully");
+        response.put("success", true);
+
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/validate")
-    public ResponseEntity<String> validateToken() {
+    public ResponseEntity<Map<String, Object>> validateToken() {
         // This endpoint can be used to check if the current token is valid
         // Spring Security will handle the validation through the JWT filter
-        return ResponseEntity.ok("Token is valid");
+        Map<String, Object> response = new HashMap<>();
+        response.put("message", "Token is valid");
+        response.put("valid", true);
+
+        return ResponseEntity.ok(response);
     }
 }

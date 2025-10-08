@@ -1,10 +1,8 @@
-// src/main/java/com/taskmanager/task_manager_backend/config/SecurityConfig.java
 package com.taskmanager.task_manager_backend.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -60,18 +58,23 @@ public class SecurityConfig {
         http.csrf(csrf -> csrf.disable())
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(authz -> authz
-                        // Allow all OPTIONS requests (CORS preflight)
-                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                        // Allow test endpoints (for email testing)
+                        .requestMatchers("/test/**").permitAll()
                         // Allow authentication endpoints
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/public/**").permitAll()
                         .requestMatchers("/actuator/health").permitAll()
+                        // Profile endpoints require authentication
+                        .requestMatchers("/profile/**").authenticated()
+                        .requestMatchers("/tasks/**").authenticated()
+                        .requestMatchers("/categories/**").authenticated()
                         // All other requests require authentication
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(ex -> ex.authenticationEntryPoint(jwtAuthenticationEntryPoint))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
+        // IMPORTANT: Add JWT filter BEFORE UsernamePasswordAuthenticationFilter
         http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

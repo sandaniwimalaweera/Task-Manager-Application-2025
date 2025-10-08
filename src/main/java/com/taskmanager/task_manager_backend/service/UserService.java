@@ -1,6 +1,11 @@
 package com.taskmanager.task_manager_backend.service;
 
 import com.taskmanager.task_manager_backend.dto.UserProfileDto;
+import com.taskmanager.task_manager_backend.dto.UpdateProfileRequest;
+import com.taskmanager.task_manager_backend.dto.ChangePasswordRequest;
+import com.taskmanager.task_manager_backend.dto.ChangeEmailRequest;
+import com.taskmanager.task_manager_backend.dto.UserProfileResponse;
+import com.taskmanager.task_manager_backend.exception.BadRequestException;
 import com.taskmanager.task_manager_backend.exception.UserAlreadyExistsException;
 import com.taskmanager.task_manager_backend.exception.UserNotFoundException;
 import com.taskmanager.task_manager_backend.model.TaskPriority;
@@ -150,6 +155,85 @@ public class UserService {
     // Check if user exists by email
     public boolean existsByEmail(String email) {
         return userRepository.existsByEmail(email);
+    }
+
+    // ========== NEW PROFILE MANAGEMENT METHODS ==========
+
+    public UserProfileResponse getProfile(String userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException("User not found with ID: " + userId));
+
+        return mapToProfileResponse(user);
+    }
+
+    public UserProfileResponse updateProfile(String userId, UpdateProfileRequest request) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException("User not found with ID: " + userId));
+
+        user.setFirstName(request.getFirstName());
+        user.setLastName(request.getLastName());
+        user.setUpdatedAt(LocalDateTime.now());
+
+        User updatedUser = userRepository.save(user);
+
+        return mapToProfileResponse(updatedUser);
+    }
+
+    public void changePasswordEnhanced(String userId, ChangePasswordRequest request) {
+        if (!request.getNewPassword().equals(request.getConfirmPassword())) {
+            throw new BadRequestException("New password and confirmation do not match");
+        }
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException("User not found with ID: " + userId));
+
+        if (!passwordEncoder.matches(request.getCurrentPassword(), user.getPassword())) {
+            throw new BadRequestException("Current password is incorrect");
+        }
+
+        if (passwordEncoder.matches(request.getNewPassword(), user.getPassword())) {
+            throw new BadRequestException("New password must be different from current password");
+        }
+
+        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        user.setUpdatedAt(LocalDateTime.now());
+
+        userRepository.save(user);
+    }
+
+    public UserProfileResponse changeEmail(String userId, ChangeEmailRequest request) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException("User not found with ID: " + userId));
+
+        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+            throw new BadRequestException("Password is incorrect");
+        }
+
+        if (userRepository.existsByEmail(request.getNewEmail())) {
+            throw new UserAlreadyExistsException("Email is already in use");
+        }
+
+        if (user.getEmail().equals(request.getNewEmail())) {
+            throw new BadRequestException("New email must be different from current email");
+        }
+
+        user.setEmail(request.getNewEmail());
+        user.setUpdatedAt(LocalDateTime.now());
+
+        User updatedUser = userRepository.save(user);
+
+        return mapToProfileResponse(updatedUser);
+    }
+
+    private UserProfileResponse mapToProfileResponse(User user) {
+        UserProfileResponse response = new UserProfileResponse();
+        response.setId(user.getId());
+        response.setEmail(user.getEmail());
+        response.setUsername(user.getUsername());
+        response.setFirstName(user.getFirstName());
+        response.setLastName(user.getLastName());
+        response.setCreatedAt(user.getCreatedAt());
+        return response;
     }
 
     // Inner class for dashboard statistics

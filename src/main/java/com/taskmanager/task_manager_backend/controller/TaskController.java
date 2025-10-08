@@ -4,6 +4,7 @@ import com.taskmanager.task_manager_backend.model.Task;
 import com.taskmanager.task_manager_backend.model.TaskPriority;
 import com.taskmanager.task_manager_backend.model.TaskStatus;
 import com.taskmanager.task_manager_backend.service.TaskService;
+import com.taskmanager.task_manager_backend.service.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -15,11 +16,14 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/tasks")
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "http://localhost:4200", allowedHeaders = "*", methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE, RequestMethod.PATCH, RequestMethod.OPTIONS})
 public class TaskController {
 
     @Autowired
     private TaskService taskService;
+
+    @Autowired
+    private EmailService emailService;
 
     @GetMapping
     public ResponseEntity<List<Task>> getAllTasks(Authentication authentication) {
@@ -104,18 +108,31 @@ public class TaskController {
         return ResponseEntity.ok(tasks);
     }
 
+    // MAIN FIX: This endpoint expects status as a query parameter
     @PatchMapping("/{id}/status")
     public ResponseEntity<Task> updateTaskStatus(@PathVariable String id,
                                                  @RequestParam TaskStatus status,
                                                  Authentication authentication) {
         String username = authentication.getName();
 
+        // Verify the task belongs to the authenticated user
         Optional<Task> existingTask = taskService.getTaskByIdAndUsername(id, username);
         if (existingTask.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
 
+        // Validate status
+        if (status == null) {
+            return ResponseEntity.badRequest().build();
+        }
+
         Task updatedTask = taskService.updateTaskStatus(id, status);
         return ResponseEntity.ok(updatedTask);
+    }
+
+    @GetMapping("/test/send-email")
+    public ResponseEntity<String> testEmail(@RequestParam String email) {
+        emailService.sendSimpleEmail(email, "Test Email", "This is a test email from Task Manager!");
+        return ResponseEntity.ok("Email sent to " + email);
     }
 }
